@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-var JSONRpc = require('./jsonrpc.js')
+var JSONRpc = require('jsonrpc')
 
 var jrpc = new JSONRpc({
   endpoint: 'http://localhost:9001/rpc',
