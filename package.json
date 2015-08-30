@@ -28,7 +28,7 @@
     "source-map-support": "^0.3.2"
   },
   "devDependencies": {
-    "fail": "0.0.0",
+    "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
     "gulp-jscs": "^2.0.0",
     "gulp-jshint": "^1.11.2",
