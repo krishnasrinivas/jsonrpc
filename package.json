@@ -1,0 +1,48 @@
+{
+  "name": "jsonrpc",
+  "version": "0.0.1",
+  "description": "Minimal JSON RPC 2.0 Library for Javascript",
+  "main": "./dist/main/jsonrpc.js",
+  "scripts": {
+    "compile": "gulp compile",
+    "test": "gulp test",
+    "prepublish": "gulp test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minio/jsonrpc.git"
+  },
+  "author": {
+    "name": "Minio, Inc.",
+    "email": "",
+    "url": "https://minio.io"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/minio/jsonrpc/issues",
+    "mail": ""
+  },
+  "homepage": "https://github.com/minio/jsonrpc#readme",
+  "dependencies": {
+    "concat-stream": "^1.5.0",
+    "source-map-support": "^0.3.2",
+    "stream": "0.0.2"
+  },
+  "devDependencies": {
+    "gulp-babel": "^5.2.1",
+    "gulp-jscs": "^2.0.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-notify": "^2.2.0",
+    "gulp-sourcemaps": "^1.5.2"
+  },
+  "keywords": [
+    "api",
+    "minio",
+    "json",
+    "rpc",
+    "jsonrpc"
+  ]
+}
