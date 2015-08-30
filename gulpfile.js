@@ -6,13 +6,13 @@ var notify = require('gulp-notify');
 var jscs = require('gulp-jscs');
 var jshint = require('gulp-jshint');
 
-gulp.task('default', ['test'], function() {})
+gulp.task('default', ['compile', 'style', 'lint'], function() {})
 
 gulp.task('compile', function(cb) {
   compile('src/main/**/*.js', 'minio.js', 'dist/main', cb)
 })
 
-gulp.task('jscs', function() {
+gulp.task('style', function() {
   gulp.src('src/main/*.js')
     .pipe(jscs())
     .pipe(notify({

@@ -4,9 +4,7 @@
   "description": "Minimal JSON RPC 2.0 Library for Javascript",
   "main": "./dist/main/jsonrpc.js",
   "scripts": {
-    "compile": "gulp compile",
-    "test": "gulp test",
-    "prepublish": "gulp test"
+    "compile": "gulp"
   },
   "repository": {
     "type": "git",
@@ -27,16 +25,16 @@
   },
   "homepage": "https://github.com/minio/jsonrpc#readme",
   "dependencies": {
-    "concat-stream": "^1.5.0",
-    "source-map-support": "^0.3.2",
-    "stream": "0.0.2"
+    "source-map-support": "^0.3.2"
   },
   "devDependencies": {
+    "fail": "0.0.0",
     "gulp-babel": "^5.2.1",
     "gulp-jscs": "^2.0.0",
     "gulp-jshint": "^1.11.2",
     "gulp-notify": "^2.2.0",
-    "gulp-sourcemaps": "^1.5.2"
+    "gulp-sourcemaps": "^1.5.2",
+    "jshint-stylish": "^2.0.1"
   },
   "keywords": [
     "api",

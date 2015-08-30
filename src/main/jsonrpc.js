@@ -19,34 +19,35 @@ require('source-map-support').install()
 var Http = require('http'),
     Https = require('https'),
     Url = require('url'),
-    Concat = require('concat-stream'),
-    Stream = require('stream')
-
-var parseSuccess = (response, cb) => {
-  if (typeof response !== 'undefined') {
-    response.pipe(Concat(successBody => {
-      if (successBody.length === 0) {
+    Stream = require('stream'),
+    parseSuccess = (response, cb) => {
+      if (typeof response !== 'undefined') {
+        response.setEncoding('utf8')
+        var body = ''
+        response.on('data', function(chunk) {
+          body += chunk
+        })
+        response.on('end', function() {
+          return cb(null, JSON.parse(body.toString()))
+        })
+      } else {
         throw new Error('No response was received')
       }
-      return cb(null, JSON.Parse(successBody.toString()))
-    }))
-  } else {
-    throw new Error('No response was received')
-  }
-}
-
-var parseError = (response, cb) => {
-  if (typeof response !== 'undefined') {
-    response.pipe(Concat(errorBody => {
-      if (errorBody.length === 0) {
+    },
+    parseError = (response, cb) => {
+      if (typeof response !== 'undefined') {
+        response.setEncoding('utf8')
+        var body = ''
+        response.on('data', function(chunk) {
+          body += chunk
+        })
+        response.on('end', function() {
+          return cb(JSON.parse(body.toString()), null)
+        })
+      } else {
         throw new Error('No response was received')
       }
-      return cb(JSON.Parse(errorBody.toString()))
-    }))
-  } else {
-    throw new Error('No response was received')
-  }
-}
+    }
 
 class Client {
   constructor(params, transport) {
@@ -107,9 +108,8 @@ class Client {
     var dataStream = new Stream.Readable(),
         dataObj = {
           version: this.version,
-          method: this.namespace ? this.namespace +'.'+ method : method,
           id: options.id,
-          params: options.params
+          params: options.params ? options.params : []
         },
         requestParams = {
           host: this.params.host,
@@ -120,6 +120,14 @@ class Client {
             'Content-Type': 'application/json'
           }
         }
+
+    // prefix namespace as provided
+    if (this.namespace) {
+      dataObj.method = this.namespace +
+        '.' + method
+    } else {
+      dataObj.method = method
+    }
 
     dataStream._read = function() {}
     dataStream.push(JSON.stringify(dataObj))
