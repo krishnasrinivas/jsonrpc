@@ -17,12 +17,11 @@
 var JSONRpc = require('./jsonrpc.js')
 
 var jrpc = new JSONRpc({
-  endpoint: 'http://localhost:9001',
-  path: '/rpc',
+  endpoint: 'http://localhost:9001/rpc',
   namespace: 'Auth'
 })
 
-jrpc.makeRequest('Get', {}, function(error, data) {
+jrpc.call('Get', {}, function(error, data) {
   if (error) {
     console.log(error)
     return

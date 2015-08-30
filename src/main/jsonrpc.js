@@ -20,6 +20,7 @@ var Http = require('http'),
     Https = require('https'),
     Url = require('url'),
     Stream = require('stream'),
+    ValidUrl = require('valid-url'),
     parseSuccess = (response, cb) => {
       if (typeof response !== 'undefined') {
         response.setEncoding('utf8')
@@ -42,7 +43,9 @@ var Http = require('http'),
           body += chunk
         })
         response.on('end', function() {
-          return cb(JSON.parse(body.toString()), null)
+          if (body.length !== 0) {
+            return cb(JSON.parse(body.toString()))
+          }
         })
       } else {
         throw new Error('No response was received')
@@ -54,14 +57,13 @@ class Client {
     if (params === undefined) {
       throw new Error('No params specified')
     }
-    if (params.namespace === undefined) {
-      throw new Error('namespace must be a string')
-    }
-    if (params.path === undefined) {
-      throw new Error('path must be a string')
+    if (!ValidUrl.isWebUri(params.endpoint)) {
+      throw new Error('Invalid URL')
     }
     var parsedEndpoint = Url.parse(params.endpoint),
-        port = +parsedEndpoint.port
+        port = parsedEndpoint.port,
+        host = parsedEndpoint.hostname,
+        path = parsedEndpoint.pathname
 
     if (transport) {
       this.transport = transport
@@ -89,15 +91,15 @@ class Client {
       }
     }
     this.version = '2.0'
-    this.path = params.path
     this.namespace = params.namespace
     this.params = {
-      host: parsedEndpoint.hostname,
-      port: port
+      host: host,
+      port: port,
+      path: path
     }
   }
 
-  makeRequest(method, options, cb) {
+  call(method, options, cb) {
     if (!options) {
       options = {id: 1}
     }
@@ -114,7 +116,7 @@ class Client {
         requestParams = {
           host: this.params.host,
           port: this.params.port,
-          path: this.path,
+          path: this.params.path,
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

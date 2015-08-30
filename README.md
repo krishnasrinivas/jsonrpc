@@ -5,5 +5,26 @@
 ```bash
 $ git clone https://github.com/minio/jsonrpc
 $ npm install
-$ gulp
 ```
+
+## Example
+
+```js
+#!/usr/bin/env node
+
+var JSONRpc = require('jsonrpc')
+
+var jrpc = new JSONRpc({
+  endpoint: 'http://localhost:9001/rpc',
+  namespace: 'Auth'
+})
+
+jrpc.call('Get', {}, function(error, data) {
+  if (error) {
+    console.log(error)
+    return
+  }
+  console.log(data)
+})
+```
+
