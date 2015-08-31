@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script type="text/javascript" src="jsonrpc.js"></script>
+    <script>
+       jsonrpc.request({endpoint: 'http://localhost:9001/rpc', namespace: 'Auth'});
+       jsonrpc.call('Get', {}, function(error, data) {
+         if (error) {
+           console.log(error);
+           return;
+         }
+         console.log(data);
+       });
+    </script>
+  </head>
+
+  <body>
+  </body>
+</html>
+
