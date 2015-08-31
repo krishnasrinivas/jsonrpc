@@ -1,5 +1,5 @@
 /*
- * Minimal JSON RPC 2.0 Library for Javascript, (C) 2015 Minio, Inc.
+ * Minimal JSON RPC 2.0 Client Library for Javascript, (C) 2015 Minio, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the 'License');
  * you may not use this file except in compliance with the License.
