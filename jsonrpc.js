@@ -16,53 +16,44 @@
 
 'use strict';
 
-function error(msg) {
-  console.log(backtrace());
-  throw new Error(msg);
-}
+(function(global) {
+  function error(msg) {
+    console.log(backtrace());
+    throw new Error(msg);
+  }
 
-function backtrace() {
-  try {
-    throw new Error();
-  } catch (e) {
-    return e.stack ? e.stack.split('\n').slice(2).join('\n') : '';
+  function backtrace() {
+    try {
+      throw new Error();
+    } catch (e) {
+      return e.stack ? e.stack.split('\n').slice(2).join('\n') : '';
+    }
   }
-}
 
-// Validates if URL is safe and allowed, e.g. to avoid XSS.
-function isValidUrl(url, allowRelative) {
-  if (!url) {
-    return false;
+  // Validates if URL is safe and allowed, e.g. to avoid XSS.
+  function isValidUrl(url, allowRelative) {
+    if (!url) {
+      return false;
+    }
+    // RFC 3986 (http://tools.ietf.org/html/rfc3986#section-3.1)
+    // scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    var protocol = /^[a-z][a-z0-9+\-.]*(?=:)/i.exec(url);
+    if (!protocol) {
+      return allowRelative;
+    }
+    protocol = protocol[0].toLowerCase();
+    switch (protocol) {
+    case 'http':
+    case 'https':
+      return true;
+    default:
+      return false;
+    }
   }
-  // RFC 3986 (http://tools.ietf.org/html/rfc3986#section-3.1)
-  // scheme = ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
-  var protocol = /^[a-z][a-z0-9+\-.]*(?=:)/i.exec(url);
-  if (!protocol) {
-    return allowRelative;
-  }
-  protocol = protocol[0].toLowerCase();
-  switch (protocol) {
-  case 'http':
-  case 'https':
-    return true;
-  default:
-    return false;
-  }
-}
-
-(function (global, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define([], factory);
-  } else if (typeof module !== 'undefined' && module.exports){
-    module.exports = factory();
-  } else {
-    global.JsonRPCRequest = factory();
-  }
-})(this, function () {
 
   function JsonRPCRequest(params) {
     var settings = {
-      version: '2.0',
+      version: '2.0'
     }
     if (!params) {
       error('Invalid params');
@@ -128,5 +119,5 @@ function isValidUrl(url, allowRelative) {
       _doRequest(jsonData, cb)
     }
   }
-  return JsonRPCRequest;
-});
+  global.JsonRPCRequest = JsonRPCRequest;
+})(this);
