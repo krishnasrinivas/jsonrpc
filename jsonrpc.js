@@ -83,24 +83,7 @@ function isValidUrl(url, allowRelative) {
 
     var self = this;
 
-    this.call = function (method, options, cb) {
-      if (!options) {
-        options = { id: 1};
-      }
-      if (!options.id) {
-        options.id = 1;
-      }
-      var dataObj = {
-        jsonrpc: self.version,
-        method: self.namespace ? self.namespace +'.'+ method : method,
-        params: options.params ? options.params : [],
-        id: options.id
-      }
-      var jsonData = JSON.stringify(dataObj);
-      self._doRequest(jsonData, cb)
-    }
-
-    this._doRequest = function (data, cb) {
+    function _doRequest(data, cb) {
       var xmlhttp = new XMLHttpRequest(),
           method = 'POST',
           url = self.endpoint;
@@ -126,6 +109,23 @@ function isValidUrl(url, allowRelative) {
         cb(null, JSON.parse(xmlhttp.responseText));
       }
       xmlhttp.send(data);
+    }
+
+    this.call = function (method, options, cb) {
+      if (!options) {
+        options = { id: 1};
+      }
+      if (!options.id) {
+        options.id = 1;
+      }
+      var dataObj = {
+        jsonrpc: self.version,
+        method: self.namespace ? self.namespace +'.'+ method : method,
+        params: options.params ? options.params : [],
+        id: options.id
+      }
+      var jsonData = JSON.stringify(dataObj);
+      _doRequest(jsonData, cb)
     }
   }
   return JsonRPCRequest;
