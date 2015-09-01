@@ -2,7 +2,7 @@
   <head>
     <script type="text/javascript" src="../jsonrpc.js"></script>
     <script>
-       jsonrpc.request({endpoint: 'http://localhost:9001/rpc', namespace: 'Auth'});
+       var jsonrpc = new JsonRPCRequest({endpoint: 'http://localhost:9001/rpc', namespace: 'Auth'});
        jsonrpc.call('Get', {}, function(error, data) {
          if (error) {
            console.log(error);

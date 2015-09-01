@@ -50,65 +50,83 @@ function isValidUrl(url, allowRelative) {
   }
 }
 
-var jsonrpc = {
-  version: '2.0',
-  endpoint: null,
-  namespace: null,
-  request: function(params) {
+(function (global, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define([], factory);
+  } else if (typeof module !== 'undefined' && module.exports){
+    module.exports = factory();
+  } else {
+    global.JsonRPCRequest = factory();
+  }
+})(this, function () {
+
+  function JsonRPCRequest(params) {
+    var settings = {
+      version: '2.0',
+    }
     if (!params) {
       error('Invalid params');
     }
-    // allowing relative url for now
+    // allow relative url
     if (!isValidUrl(params.endpoint, true)) {
       error('Invalid url');
     }
-    this.endpoint = params.endpoint;
-    this.namespace = params.namespace;
-    return this;
-  },
-  call: function(method, options, cb) {
-    if (!options) {
-      options = { id: 1};
-    }
-    if (!options.id) {
-      options.id = 1;
-    }
-    var dataObj = {
-      jsonrpc: this.version,
-      method: this.namespace ? this.namespace +'.'+ method : method,
-      params: options.params ? options.params : [],
-      id: options.id
-    }
-    var jsonData = JSON.stringify(dataObj);
-    this._doRequest(jsonData, cb)
-  },
 
-  _doRequest: function(data, cb) {
-    var xmlhttp = new XMLHttpRequest(),
-        method = 'POST',
-        url = this.endpoint;
+    // Overwrite and define settings with options if they exist.
+    for (var key in settings) {
+      this[key] = settings[key];
+    }
 
-    xmlhttp.open(method, url, true);
-    xmlhttp.setRequestHeader('Content-Type', 'application/json');    
-    xmlhttp.onreadystatechange = function() {
-      if (4 !== xmlhttp.readyState) {
-        return;
+    for (var key in params) {
+      this[key] = params[key];
+    }
+
+    var self = this;
+
+    this.call = function (method, options, cb) {
+      if (!options) {
+        options = { id: 1};
       }
-      if (200 !== xmlhttp.status) {
-        if (400 === xmlhttp.status) {
-          cb(JSON.parse(xmlhttp.responseText), null);
+      if (!options.id) {
+        options.id = 1;
+      }
+      var dataObj = {
+        jsonrpc: self.version,
+        method: self.namespace ? self.namespace +'.'+ method : method,
+        params: options.params ? options.params : [],
+        id: options.id
+      }
+      var jsonData = JSON.stringify(dataObj);
+      self._doRequest(jsonData, cb)
+    }
+
+    this._doRequest = function (data, cb) {
+      var xmlhttp = new XMLHttpRequest(),
+          method = 'POST',
+          url = self.endpoint;
+
+      xmlhttp.open(method, url, true);
+      xmlhttp.setRequestHeader('Content-Type', 'application/json');
+      xmlhttp.onreadystatechange = function() {
+        if (4 !== xmlhttp.readyState) {
           return;
         }
-        if (404 === xmlhttp.status) {
-          cb({error: 'Endpoint url not found', version: '2.0'}, null);
+        if (200 !== xmlhttp.status) {
+          if (400 === xmlhttp.status) {
+            cb(JSON.parse(xmlhttp.responseText), null);
+            return;
+          }
+          if (404 === xmlhttp.status) {
+            cb({error: 'Endpoint url not found', version: '2.0'}, null);
+            return;
+          }
+          cb({error: 'Unknown internal server error', version: '2.0'}, null);
           return;
         }
-        cb({error: 'Unknown internal server error', version: '2.0'}, null);
-        return;
+        cb(null, JSON.parse(xmlhttp.responseText));
       }
-      cb(null, JSON.parse(xmlhttp.responseText));
+      xmlhttp.send(data);
     }
-    xmlhttp.send(data);
-  },
-}
-
+  }
+  return JsonRPCRequest;
+});
